@@ -4,7 +4,7 @@ import pathlib
 
 import vlc
 
-from domain import Action, Stream
+from npr.domain import Action, Stream
 
 NPRRC = "~/.nprrc"
 

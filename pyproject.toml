@@ -10,6 +10,11 @@ authors = [
 ]
 description = "A simple npr streaming cli"
 readme = "README.md"
+dependencies = [
+    "requests",
+    "click",
+    "inquirerpy",
+]
 requires-python = ">=3.10"
 classifiers = [
     "Environment :: Console",
@@ -21,3 +26,8 @@ classifiers = [
 
 [project.urls]
 
+[project.scripts]
+npr = "npr.cli:npr"
+
+[tool.setuptools.packages.find]
+where = ["src"]

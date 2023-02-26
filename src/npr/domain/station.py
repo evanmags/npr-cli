@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from domain.stream import Stream
+from npr.domain.stream import Stream
 
 
 @dataclass

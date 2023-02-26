@@ -1,3 +1,3 @@
-from domain.action import Action
-from domain.station import Station
-from domain.stream import Stream
+from npr.domain.action import Action
+from npr.domain.station import Station
+from npr.domain.stream import Stream

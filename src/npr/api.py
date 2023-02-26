@@ -1,6 +1,6 @@
 import requests
 
-from domain import Station, Stream
+from npr.domain import Station, Stream
 
 NPR_QUERY_URL = "https://www.npr.org/proxy/stationfinder/v3/stations"
 

@@ -7,9 +7,9 @@ from InquirerPy.separator import Separator
 import requests
 import vlc
 
-from api import NPRAPI
-from app_state import AppState
-from domain import Action, Station, Stream
+from npr.api import NPRAPI
+from npr.app_state import AppState
+from npr.domain import Action, Station, Stream
 
 api = NPRAPI()
 
