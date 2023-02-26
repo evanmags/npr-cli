@@ -1,6 +1,8 @@
 # Environment
 .envrc
 
+# IDE
+.vscode
 
 # Python
 __pycache__
