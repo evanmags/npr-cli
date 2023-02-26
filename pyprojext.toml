@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "npr-cli"
+version = "0.0.1"
+authors = [
+    { name="evanmags", email="magnussen.evan@gmail.com" }
+]
+description = "A simple npr streaming cli"
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Environment :: Console",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: MacOS",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Multimedia :: Sound/Audio :: Players",
+]
+
+[project.urls]
+
