@@ -1,6 +1,6 @@
 import click
 
-from npr.app_state import get_app_state
+from npr.app_state import AppState, get_app_state
 from npr.domain import Action
 from npr.app_controller import main_control_loop
 
@@ -30,8 +30,16 @@ def search(ctx: click.Context, query: str | None):
 @npr.command()
 @click.pass_context
 def play(ctx: click.Context):
-    state = ctx.obj["APP_STATE"]
-    state.set_next(Action.play)
+    state: AppState = ctx.obj["APP_STATE"]
+    if state.last_played:
+        state.set_next(Action.play)
+    else:
+        click.echo(
+            click.style(
+                "You'll need to listen to something before doing that.", fg="red"
+            )
+        )
+        state.set_next(None)
 
     main_control_loop(state)
 
@@ -39,7 +47,15 @@ def play(ctx: click.Context):
 @npr.command()
 @click.pass_context
 def favorites(ctx):
-    state = ctx.obj["APP_STATE"]
-    state.set_next(Action.favorites_list)
+    state: AppState = ctx.obj["APP_STATE"]
+    if state.favorites:
+        state.set_next(Action.favorites_list)
+    else:
+        click.echo(
+            click.style(
+                "You'll need to set some favorites before doing that.", fg="red"
+            )
+        )
+        state.set_next(None)
 
     main_control_loop(state)

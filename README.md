@@ -28,3 +28,16 @@ npr favorites # select a stream from your favorites.
 ## Issues
 
 Please report any bugs you encounter as issues to this repository.
+
+## Building and publishing
+```
+pip install --upgrade build twine
+
+python -m build
+
+# testpypi deploy and install
+python -m twine upload --repository testpypi dist/*
+pip install --index-url https://test.pypi.org/simple/ --no-deps npr-cli
+
+python -m twine upload dist/*
+```

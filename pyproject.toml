@@ -11,9 +11,10 @@ authors = [
 description = "A simple npr streaming cli"
 readme = "README.md"
 dependencies = [
-    "requests",
     "click",
     "inquirerpy",
+    "python-vlc",
+    "requests",
 ]
 requires-python = ">=3.10"
 classifiers = [
