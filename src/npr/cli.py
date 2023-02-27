@@ -1,8 +1,8 @@
 import click
 
-from npr.app_state import AppState, get_app_state
+from npr.app.state import AppState, get_app_state
 from npr.domain import Action
-from npr.app_controller import main_control_loop
+from npr.app.controller import main_control_loop
 
 
 @click.group(invoke_without_command=True)

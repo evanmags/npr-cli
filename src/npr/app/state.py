@@ -1,6 +1,7 @@
-from dataclasses import dataclass, asdict, field
+from dataclasses import dataclass, asdict
 import json
 import pathlib
+from typing import Any
 
 import vlc
 
@@ -16,36 +17,36 @@ class AppState:
     last_played: Stream | None
     player: vlc.MediaPlayer | None = None
 
-    _next: tuple[Action | None, Stream | str | None] | None = None, (None,)
+    _next_action: Action | None = None
+    _next_args: tuple[Any, ...] = tuple()
 
     @classmethod
     def load(cls) -> "AppState":
         nprrc = pathlib.Path(NPRRC).expanduser()
         if not nprrc.exists():
             nprrc.touch()
-            with nprrc.open("w") as f:
-                json.dump(default_app_state(), f)
             return cls(**default_app_state())
 
         with nprrc.open() as f:
             c = json.load(f)
-            cl = cls(
+            return cls(
                 favorites=[Stream(**s) for s in c["favorites"]],
                 now_playing=None,
                 last_played=Stream(**c["last_played"]) if c["last_played"] else None,
             )
-            return cl
 
     def write(self):
         self.player = None
         nprrc = pathlib.Path(NPRRC).expanduser()
-        json.dump(asdict(self), nprrc.open("w"))
+        with nprrc.open("w") as f:
+            json.dump(asdict(self), f)
 
     def next(self):
-        return self._next
+        return self._next_action, *self._next_args
 
     def set_next(self, action: Action | None, *args: Stream | str | None):
-        self._next = action, args
+        self._next_action = action
+        self._next_args = args
 
 
 def get_app_state() -> AppState:
