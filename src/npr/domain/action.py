@@ -2,6 +2,8 @@ from enum import Enum
 
 
 class Action(Enum):
+    up = "up"
+    down = "down"
     search = "search"
     play = "play"
     stop = "stop"

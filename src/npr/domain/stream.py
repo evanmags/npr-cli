@@ -5,7 +5,7 @@ from dataclasses import dataclass
 class Stream:
     primary: bool
     station: str
-    title: str
+    name: str
     href: str
 
     def is_playlist(self) -> bool:
