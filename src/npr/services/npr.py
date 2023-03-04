@@ -18,25 +18,25 @@ class NPRAPI:
         )
 
         return [
-            self.station_from_api_item(item)
+            self.__station_from_api_item(item)
             for item in response.json().get("items", [])
         ]
 
-    def station_from_api_item(self, item: dict) -> Station:
+    def __station_from_api_item(self, item: dict) -> Station:
         attrs = item["attributes"]
         return Station(
             name=attrs["brand"]["name"],
             call=attrs["brand"]["call"],
             streams=[
-                self.stream_from_api_item(stream, attrs)
+                self.__stream_from_api_item(stream, attrs)
                 for stream in attrs["streamsV2"]
             ],
         )
 
-    def stream_from_api_item(self, stream: dict, station: dict) -> Stream:
+    def __stream_from_api_item(self, stream: dict, station: dict) -> Stream:
         return Stream(
             primary=stream["primary"],
             station=station["brand"]["name"],
-            title=stream["title"],
+            name=stream["title"],
             href=stream["urls"][0]["href"],
         )

@@ -4,6 +4,7 @@ dist
 *.egg-info
 
 # Environment
+.env
 .envrc
 
 # IDE
@@ -11,3 +12,9 @@ dist
 
 # Python
 __pycache__
+
+# pytest
+.pytest_cache
+
+# pytest-cov
+.coverage

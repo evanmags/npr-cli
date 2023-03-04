@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "npr-cli"
-version = "0.0.2"
+dynamic = ["version"]
 authors = [
     { name="evanmags", email="magnussen.evan@gmail.com" }
 ]
@@ -26,9 +26,25 @@ classifiers = [
 ]
 
 [project.urls]
+homepage = "https://github.com/evanmags/npr-cli"
+repository = "https://github.com/evanmags/npr-cli"
 
 [project.scripts]
 npr = "npr.cli:npr"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.dynamic]
+version = {attr = "npr.__version__"}
+
+[tool.isort]
+profile = "black"
+
+[tool.pytest.ini_options]
+addopts = "--cov=npr --cov-report term-missing --cov-config=pyproject.toml"
+
+[tool.coverage.report]
+exclude_lines = [
+    "^\\s*\\.\\.\\.$"
+]

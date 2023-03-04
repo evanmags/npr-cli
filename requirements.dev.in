@@ -1,2 +1,4 @@
--r requirements.in
+-r requirements.test.in
 black
+isort
+flake8
