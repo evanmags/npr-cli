@@ -1,0 +1,93 @@
+version: 2.1
+jobs:
+  build:
+    docker:
+      - image: cimg/python:3.10
+    steps:
+      - checkout
+      - run: |
+          pip install --upgrade build
+          python -m build
+      - store_artifacts:
+          path: ./dist
+      - persist_to_workspace:
+          root: .
+          paths: 
+            - dist
+
+  test:
+    docker:
+      - image: cimg/python:3.10
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run: |
+          pip install -r requirements.test.in $(find dist/*whl)
+          mkdir test-results
+          pytest --junitxml=test-results/junit.xml
+      - store_artifacts:
+          path: ./test-results
+      - store_test_results:
+          path: test-results
+
+  publish-preview:
+    docker:
+      - image: cimg/python:3.10 
+    environment:
+      TWINE_USERNAME: __token__
+      TWINE_PASSWORD: $TEST_PYPI_ACCESS_TOKEN
+      TWINE_REPOSITORY: testpypi
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run: |
+          pip install twine
+          python -m twine upload dist/*
+  
+  publish:
+    docker:
+      - image: cimg/python:3.10
+    parameters:
+      pypi_access_token:
+        type: string
+      pypi_repository:
+        type: string
+    environment:
+      TWINE_USERNAME: __token__
+      TWINE_PASSWORD: << parameters.pypi_access_token >>
+      TWINE_REPOSITORY: << parameters.pypi_repository >>
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run: |
+          pip install twine
+          python -m twine upload dist/*
+    
+workflows:
+  main:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - publish:
+          name: publish-preview
+          pypi_access_token: $TEST_PYPI_ACCESS_TOKEN
+          pypi_repository: testpypi
+          requires:
+            - test
+          filters:
+            branches:
+              only: /release\/.*/
+      - publish:
+          pypi_access_token: $PYPI_ACCESS_TOKEN
+          pypi_repository: pypi
+          requires:
+            - test
+          filters:
+            branches:
+              only: main
+

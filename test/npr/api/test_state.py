@@ -4,6 +4,7 @@ from pathlib import Path
 
 import pytest
 
+from npr import __version__
 from npr.api.state import AppState
 from npr.domain import Stream
 
@@ -17,7 +18,7 @@ def mock_stream():
 def mock_state(mock_stream: Stream):
     stream = asdict(mock_stream)
     return dict(
-        __version__="0.1.1",
+        __version__=__version__,
         favorites=[stream],
         last_played=stream,
     )
