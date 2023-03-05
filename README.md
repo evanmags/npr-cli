@@ -32,20 +32,14 @@ npr favorites # select a stream from your favorites.
 - Run daemon behind gunicorn/uvicorn
 - Allow over writing of last line in terminal, a giant stack of commands is ugly.
 - Create a "Now Playing" page to display known metadata about a stream
+- `npr report` to report errors as issues in GH.
+    - report streams that wont play
+        - acceptance criteria:
+            - should read `.npr/log/error.log` and send content as part of issue
+            - should send stream object.
+            - should not create issues for open issues with the same stream
+    - report recent errors, this is long term
 
 ## Issues
 
 Please report any bugs you encounter as issues to this repository.
-
-## Building and publishing
-```
-pip install --upgrade build twine
-
-python -m build
-
-# testpypi deploy and install
-python -m twine upload --repository testpypi dist/*
-pip install --index-url https://test.pypi.org/simple/ --no-deps npr-cli
-
-python -m twine upload dist/*
-```

@@ -4,18 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "npr-cli"
-dynamic = ["version"]
+dynamic = ["version", "dependencies"]
 authors = [
     { name="evanmags", email="magnussen.evan@gmail.com" }
 ]
 description = "A simple npr streaming cli"
 readme = "README.md"
-dependencies = [
-    "click",
-    "inquirerpy",
-    "python-vlc",
-    "requests",
-]
 requires-python = ">=3.10"
 classifiers = [
     "Environment :: Console",
@@ -37,6 +31,7 @@ where = ["src"]
 
 [tool.setuptools.dynamic]
 version = {attr = "npr.__version__"}
+dependencies = {file = ["requirements.in"]}
 
 [tool.isort]
 profile = "black"

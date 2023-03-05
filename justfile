@@ -2,7 +2,6 @@ clean:
     rm -rf build dist src/npr_cli.egg-info
     pip uninstall -y npr-cli
 
-
 build: clean
     pip install --upgrade build twine
     python -m build
@@ -18,7 +17,6 @@ build-test: build
     @just _test
 
 build-publish-test: publish-testpypi _test
-
 
 publish:
     python -m twine upload dist/*
