@@ -30,21 +30,6 @@ jobs:
           path: ./test-results
       - store_test_results:
           path: test-results
-
-  publish-preview:
-    docker:
-      - image: cimg/python:3.10 
-    environment:
-      TWINE_USERNAME: __token__
-      TWINE_PASSWORD: $TEST_PYPI_ACCESS_TOKEN
-      TWINE_REPOSITORY: testpypi
-    steps:
-      - checkout
-      - attach_workspace:
-          at: .
-      - run: |
-          pip install twine
-          python -m twine upload dist/*
   
   publish:
     docker:
@@ -81,12 +66,12 @@ workflows:
             - test
           filters:
             branches:
-              only: /release\/.*/
+              only: main
       - publish:
           pypi_access_token: ${PYPI_ACCESS_TOKEN}
           pypi_repository: pypi
           requires:
-            - test
+            - publish-preview
           filters:
             branches:
               only: main

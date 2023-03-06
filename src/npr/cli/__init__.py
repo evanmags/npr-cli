@@ -22,6 +22,7 @@ def domain_err_to_click_err(f):
                 click.style(
                     "The npr-cli daemon is not running. Run `npr up` to start.",
                     fg="red",
+                    bold=True,
                 )
             )
         except FailedActionException as fae:
