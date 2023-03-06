@@ -48,13 +48,11 @@ def mock_stream():
     )
 
 
-def test_up(mock_backend, mock_popen, mock_pidfile):
+def test_up(mock_backend, mock_popen):
     mock_popen.return_value = mock_popen
-    mock_popen.pid = "1234"
     mock_backend.poll_health.return_value = True
 
     assert up() == (None, None)
-    mock_pidfile.write_text.assert_called_once_with("1234")
 
 
 def test_down(mock_backend, mock_popen, mock_pidfile):

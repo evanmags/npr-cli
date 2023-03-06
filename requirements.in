@@ -1,5 +1,7 @@
 click
 flask
+gunicorn
 inquirerpy
+packaging
 python-vlc
 requests

@@ -1,5 +1,5 @@
 import sys
-from subprocess import DEVNULL, STDOUT, Popen
+from subprocess import Popen
 from typing import Any
 
 from InquirerPy import inquirer
@@ -9,7 +9,7 @@ from InquirerPy.separator import Separator
 from npr.cli.handlers import search
 from npr.cli.handlers.dispatcher import dispatcher
 from npr.domain import Action, Stream
-from npr.domain.constants import NPR_CLI_SERVER_PORT, NPR_PIDFILE
+from npr.domain.constants import NPR_CLI_SERVER_BIND, NPR_PIDFILE
 from npr.services.backend import backend
 
 dispatcher.react_to(Action.search)(search.search)
@@ -21,28 +21,27 @@ def up(*args: Any):
         [
             sys.executable,
             "-m",
-            "flask",
-            "--app",
+            "gunicorn",
+            "--bind",
+            NPR_CLI_SERVER_BIND,
+            "--name",
+            "npr.cli.server",
+            "--pid",
+            NPR_PIDFILE,
+            "--daemon",
             "npr.api.server:app",
-            "run",
-            "--port",
-            f"{NPR_CLI_SERVER_PORT}",
         ],
-        start_new_session=True,
-        stdout=DEVNULL,
-        stderr=STDOUT,
     )
+    p.wait()
 
     assert backend.poll_health(poll_for=True)
-
-    NPR_PIDFILE.write_text(str(p.pid))
 
     return None, None
 
 
 @dispatcher.react_to(Action.down)
 def down(*args: Any):
-    pid = NPR_PIDFILE.read_text()
+    pid = NPR_PIDFILE.read_text().strip()
 
     p = Popen(["kill", pid])
     p.wait()
