@@ -9,11 +9,11 @@ build: clean
 publish-testpypi: build
     python -m twine upload --repository testpypi dist/*
     pip install --index-url https://test.pypi.org/simple/ --no-deps npr-cli
-    pip install -r requirements.test.in
+    pip install .[test]
     npr --help
 	
 build-test: build
-    pip install -r requirements.test.in $(find -f dist/*whl)
+    pip install $(find -f dist/*whl)[test]
     @just _test
 
 build-publish-test: publish-testpypi _test
