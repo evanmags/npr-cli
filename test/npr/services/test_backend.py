@@ -6,7 +6,7 @@ from requests.exceptions import ConnectionError, HTTPError
 
 from npr.domain import Stream
 from npr.domain.exceptions import DaemonNotRunningException
-from npr.services.backend import Backend, backend
+from npr.services import Backend, backendapi
 
 
 @pytest.fixture(scope="function")
@@ -48,23 +48,23 @@ def raise_daemon_not_running_exception(*args, **kwargs):
 
 
 def test_health(mock_requests):
-    assert backend.health() is True
+    assert backendapi.health() is True
 
 
 def test_health_raises_connection_error(mock_requests):
     mock_requests.get.side_effect = raise_connection_error
     with pytest.raises(DaemonNotRunningException):
-        backend.health()
+        backendapi.health()
 
 
 def test_health_raises_http_error(mock_requests):
     mock_requests.get.side_effect = raise_http_error
     with pytest.raises(DaemonNotRunningException):
-        backend.health()
+        backendapi.health()
 
 
 def test_poll_health_fails(mock_requests):
-    with patch.object(backend, "health") as mock_backend:
+    with patch.object(backendapi, "health") as mock_backend:
         mock_backend.health.side_effect = raise_daemon_not_running_exception
         mock_backend.poll_health.side_effect = Backend.poll_health
 
@@ -75,7 +75,7 @@ def test_poll_health_fails(mock_requests):
 
 
 def test_poll_health_succeeds(mock_requests):
-    with patch.object(backend, "health") as mock_backend:
+    with patch.object(backendapi, "health") as mock_backend:
         mock_backend.poll_health.side_effect = Backend.poll_health
 
         assert mock_backend.poll_health(
@@ -87,57 +87,57 @@ def test_poll_health_succeeds(mock_requests):
 def test_play(mock_requests, mock_stream, mock_stream_json):
     mock_requests.json.return_value = mock_stream_json
 
-    assert backend.play(mock_stream) == mock_stream
+    assert backendapi.play(mock_stream) == mock_stream
 
 
 def test_now_playing(mock_requests, mock_stream, mock_stream_json):
     mock_requests.json.return_value = mock_stream_json
     mock_requests.status_code = 200
 
-    assert backend.now_playing() == mock_stream
+    assert backendapi.now_playing() == mock_stream
 
 
 def test_now_playing_404(mock_requests):
     mock_requests.status_code = 404
 
-    assert backend.now_playing() is None
+    assert backendapi.now_playing() is None
 
 
 def test_now_playing_raises(mock_requests):
     mock_requests.raise_for_status.side_effect = raise_http_error
 
-    assert backend.now_playing() is None
+    assert backendapi.now_playing() is None
 
 
 def test_stop(mock_requests):
-    backend.stop()
+    backendapi.stop()
 
     mock_requests.post.assert_called_with(
-        backend._url + "/stop",
+        backendapi._url + "/stop",
     )
 
 
 def test_get_favorites(mock_requests, mock_stream_json, mock_stream):
     mock_requests.json.return_value = [mock_stream_json]
 
-    assert backend.get_favorites() == [mock_stream]
+    assert backendapi.get_favorites() == [mock_stream]
     mock_requests.get.assert_called_with(
-        backend._url + "/favorites",
+        backendapi._url + "/favorites",
     )
 
 
 def test_add_favorite(mock_requests, mock_stream, mock_stream_json):
-    backend.add_favorite(mock_stream)
+    backendapi.add_favorite(mock_stream)
 
     mock_requests.post.assert_called_with(
-        backend._url + "/favorites",
+        backendapi._url + "/favorites",
         json=mock_stream_json,
     )
 
 
 def test_remove_favorite(mock_requests, mock_stream):
-    backend.remove_favorite(mock_stream)
+    backendapi.remove_favorite(mock_stream)
 
     mock_requests.delete.assert_called_with(
-        backend._url + f"/favorites/{mock_stream.station}/{mock_stream.name}",
+        backendapi._url + f"/favorites/{mock_stream.station}/{mock_stream.name}",
     )

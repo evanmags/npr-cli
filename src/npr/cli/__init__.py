@@ -7,9 +7,11 @@ from npr.domain import Action
 from npr.domain.exceptions import (
     DaemonNotRunningException,
     FailedActionException,
+    NotPlayingException,
     UnknownActionException,
 )
-from npr.services.backend import backend
+from npr.services import backendapi
+from npr.tui import nprtui
 
 
 def domain_err_to_click_err(f):
@@ -22,6 +24,14 @@ def domain_err_to_click_err(f):
                 click.style(
                     "The npr-cli daemon is not running. Run `npr up` to start.",
                     fg="red",
+                    bold=True,
+                )
+            )
+        except NotPlayingException:
+            raise click.ClickException(
+                click.style(
+                    "No stream currently playing. Run `npr` to get started.",
+                    fg="black",
                     bold=True,
                 )
             )
@@ -50,7 +60,7 @@ def domain_err_to_click_err(f):
 @domain_err_to_click_err
 def npr(ctx: click.Context):
     if ctx.invoked_subcommand != "up":
-        backend.health()
+        backendapi.health()
 
     if ctx.invoked_subcommand is None:
         main_control_loop()
@@ -59,7 +69,7 @@ def npr(ctx: click.Context):
 @npr.command()
 @domain_err_to_click_err
 def up():
-    if not backend.poll_health(poll_for=False):
+    if not backendapi.poll_health(poll_for=False):
         click.echo(click.style("Starting npr-cli daemon.", fg="green"))
         main_control_loop(
             action=Action.up,
@@ -80,7 +90,7 @@ def down():
 
 
 @npr.command()
-@click.option("-q", "query", help="Station name, call, or zip code.")
+@click.option("-q", "--query", "query", help="Station name, call, or zip code.")
 @domain_err_to_click_err
 def search(query: str | None):
     main_control_loop(
@@ -109,9 +119,28 @@ def stop():
 
 
 @npr.command()
+@click.option(
+    "-a / -r",
+    "--add / --remove",
+    "add_remove",
+    help="Add or remove the current stream to favorites",
+    default=None,
+)
 @domain_err_to_click_err
-def favorites():
+def favorites(add_remove: bool | None):
+    if add_remove is None:
+        action = Action.favorites_list
+    elif add_remove:
+        action = Action.favorites_add
+    else:
+        action = Action.favorites_remove
+
     main_control_loop(
-        action=Action.favorites_list,
+        action=action,
         run_repl=False,
     )
+
+
+@npr.command()
+def tui():
+    nprtui.run()

@@ -11,6 +11,10 @@ class FailedActionException(Exception):
         self.action = action
 
 
+class NotPlayingException(Exception):
+    pass
+
+
 class UnknownActionException(Exception):
     def __init__(self, action: Action) -> None:
         super().__init__(action.value)

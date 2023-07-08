@@ -10,7 +10,7 @@ from npr.cli.handlers import search
 from npr.cli.handlers.dispatcher import dispatcher
 from npr.domain import Action, Stream
 from npr.domain.constants import NPR_CLI_SERVER_BIND, NPR_PIDFILE
-from npr.services.backend import backend
+from npr.services import backendapi
 
 dispatcher.react_to(Action.search)(search.search)
 
@@ -34,7 +34,7 @@ def up(*args: Any):
     )
     p.wait()
 
-    assert backend.poll_health(poll_for=True)
+    assert backendapi.poll_health(poll_for=True)
 
     return None, None
 
@@ -46,26 +46,26 @@ def down(*args: Any):
     p = Popen(["kill", pid])
     p.wait()
 
-    assert not backend.poll_health(poll_for=False)
+    assert not backendapi.poll_health(poll_for=False)
 
     return None, None
 
 
 @dispatcher.react_to(Action.play)
 def play(stream: Stream | None = None):
-    backend.play(stream)
+    backendapi.play(stream)
     return None, None
 
 
 @dispatcher.react_to(Action.stop)
 def stop(*args: Any):
-    backend.stop()
+    backendapi.stop()
     return None, None
 
 
 @dispatcher.react_to(Action.favorites_list)
 def favorites_list(*args: Any):
-    favorites = backend.get_favorites()
+    favorites = backendapi.get_favorites()
 
     stream = inquirer.select(  # type: ignore
         "Select a Stream",
@@ -95,12 +95,18 @@ def favorites_list(*args: Any):
 
 
 @dispatcher.react_to(Action.favorites_add)
-def favorites_add(stream: Stream):
-    backend.add_favorite(stream)
+def favorites_add(stream: Stream | None):
+    if stream is None:
+        stream = backendapi.now_playing_or_throw()
+
+    backendapi.add_favorite(stream)
     return None, None
 
 
 @dispatcher.react_to(Action.favorites_remove)
-def favorites_remove(stream: Stream):
-    backend.remove_favorite(stream)
+def favorites_remove(stream: Stream | None):
+    if stream is None:
+        stream = backendapi.now_playing_or_throw()
+
+    backendapi.remove_favorite(stream)
     return None, None

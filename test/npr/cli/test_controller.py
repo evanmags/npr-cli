@@ -8,7 +8,7 @@ from npr.domain import Action, Stream
 
 @pytest.fixture(scope="function")
 def mock_backend():
-    with patch("npr.cli.controller.backend") as mock:
+    with patch("npr.cli.controller.backendapi") as mock:
         mock.now_playing.return_value = None
         mock.get_favorites.return_value = []
         yield mock

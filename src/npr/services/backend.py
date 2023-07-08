@@ -7,7 +7,7 @@ import requests
 
 from npr.domain import Stream
 from npr.domain.constants import NPR_CLI_SERVER_URL
-from npr.domain.exceptions import DaemonNotRunningException
+from npr.domain.exceptions import DaemonNotRunningException, NotPlayingException
 
 
 def handle_request_errors_with(return_value: Any):
@@ -91,6 +91,12 @@ class Backend:
             return None
 
         response.raise_for_status()
+
+    def now_playing_or_throw(self) -> Stream:
+        if stream := self.now_playing():
+            return stream
+
+        raise NotPlayingException()
 
     def stop(self) -> None:
         response = requests.post(self._url + "/stop")

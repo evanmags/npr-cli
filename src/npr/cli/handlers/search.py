@@ -5,7 +5,7 @@ from InquirerPy.base.control import Choice
 from InquirerPy.separator import Separator
 
 from npr.domain import Action, Station, Stream
-from npr.services.npr import NPRAPI
+from npr.services import NPRAPI
 
 api = NPRAPI()
 
@@ -15,7 +15,7 @@ def search(
 ) -> tuple[Action, Stream] | tuple[None, None]:
     if query is None:
         query: str = inquirer.text(  # type: ignore
-            "Station name, call, or zip code:",
+            "Station name, call, or zip code",
             mandatory=True,
             validate=lambda x: bool(x),
         ).execute()

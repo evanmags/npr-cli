@@ -4,7 +4,7 @@ from InquirerPy.separator import Separator
 
 from npr.cli.handlers import dispatcher
 from npr.domain import Action, Stream
-from npr.services.backend import Backend, backend
+from npr.services import Backend, backendapi
 
 ControllerInput = list[Stream] | Stream | str | None
 
@@ -17,7 +17,7 @@ def main_control_loop(
     # Always exit on Action.exit
     while run_repl or action is not None:
         if action is None:
-            action, arg = get_next_action(backend)
+            action, arg = get_next_action(backendapi)
             if action == Action.exit:
                 return
 

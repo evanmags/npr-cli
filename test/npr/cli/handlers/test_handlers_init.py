@@ -22,7 +22,7 @@ def mock_select_prompt():
 
 @pytest.fixture(scope="function")
 def mock_backend():
-    with patch("npr.cli.handlers.backend") as mock:
+    with patch("npr.cli.handlers.backendapi") as mock:
         yield mock
 
 

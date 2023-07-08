@@ -30,7 +30,7 @@ def mock_main_control_loop():
 
 @pytest.fixture(scope="function", autouse=True)
 def mock_backend():
-    with patch("npr.cli.backend") as mock:
+    with patch("npr.cli.backendapi") as mock:
         mock.health.return_value = True
         yield mock
 
@@ -67,7 +67,7 @@ class TestDomainErrToClickErr:
 class TestNpr:
     def test_npr(self, mock_main_control_loop):
         runner = CliRunner()
-        runner.invoke(npr)
+        runner.invoke(npr)  # type: ignore
         mock_main_control_loop.assert_called_once_with()
 
     def _health_side_effect_raises(self):
@@ -76,7 +76,7 @@ class TestNpr:
     def test_npr_no_daemon(self, mock_main_control_loop, mock_backend):
         mock_backend.health.side_effect = self._health_side_effect_raises
         runner = CliRunner()
-        result = runner.invoke(npr)
+        result = runner.invoke(npr)  # type: ignore
         mock_main_control_loop.assert_not_called()
         assert (
             "The npr-cli daemon is not running. Run `npr up` to start." in result.output

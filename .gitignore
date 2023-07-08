@@ -6,6 +6,7 @@ dist
 # Environment
 .env
 .envrc
+.direnv
 
 # IDE
 .vscode
@@ -18,3 +19,6 @@ __pycache__
 
 # pytest-cov
 .coverage
+
+# mac
+.DS_Store

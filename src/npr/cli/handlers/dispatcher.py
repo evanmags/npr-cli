@@ -1,7 +1,11 @@
 from typing import Any, Callable
 
 from npr.domain import Action, Stream
-from npr.domain.exceptions import FailedActionException, UnknownActionException
+from npr.domain.exceptions import (
+    FailedActionException,
+    NotPlayingException,
+    UnknownActionException,
+)
 
 
 class ActionDispatcher:
@@ -21,7 +25,10 @@ class ActionDispatcher:
         if controller := self.handlers.get(action):
             try:
                 return controller(*args, **kwargs)
-            except Exception:
+            except NotPlayingException as npe:
+                raise npe
+            except Exception as e:
+                print(e)
                 raise FailedActionException(action)
         else:
             raise UnknownActionException(action)

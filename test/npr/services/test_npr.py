@@ -1,4 +1,4 @@
-from npr.services.npr import NPRAPI
+from npr.services import NPRAPI
 
 
 def test_npr():
